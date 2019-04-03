@@ -7,8 +7,16 @@ namespace CSP.Entities
     {
         public int Size { get; set; }
         public int[,] Board { get; set; }
-        public List<int>[,] Domains { get; set; } 
+        public Dictionary<(int, int), List<int>>Domains { get; set; } 
         public IEnumerable<FutoshikiConstraint> Constraints { get; set; }
+
+        public FutoshikiData(int size, int[,] board, Dictionary<(int, int), List<int>> domains, IEnumerable<FutoshikiConstraint> constraints)
+        {
+            Size = size;
+            Board = board;
+            Domains = domains;
+            Constraints = constraints;
+        }
 
         public override string ToString()
         {

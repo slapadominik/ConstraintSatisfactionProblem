@@ -49,7 +49,15 @@ namespace CSP
                 var constraint = fileLines[i].Split(';');
                 futoshikiConstraints.Add(new FutoshikiConstraint(constraint[0], constraint[1]));
             }
-            return new FutoshikiData {Size = size, Board = board, Constraints = futoshikiConstraints};
+            Dictionary<(int, int), List<int>> domains = new Dictionary<(int, int), List<int>>();
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    domains[(i, j)] = Enumerable.Range(1, size).ToList();
+                }
+            }
+            return new FutoshikiData(size,board, domains, futoshikiConstraints);
         }
     }
 }
