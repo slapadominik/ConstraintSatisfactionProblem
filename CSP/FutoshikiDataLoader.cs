@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.ExceptionServices;
 using CSP.Consts;
 using CSP.Entities;
+using CSP.Entities.Futoshiki;
 using CSP.Helpers.Interfaces;
 
 namespace CSP
@@ -26,9 +27,8 @@ namespace CSP
 
         private FutoshikiData ParseFileData(List<string> fileLines)
         {
-            //add validation
             int size = int.Parse(fileLines[0]);
-            int[,] board = new int[size,size];
+            FutoshikiVariable[,] board = new FutoshikiVariable[size,size];
             List<FutoshikiConstraint> futoshikiConstraints = new List<FutoshikiConstraint>();
 
             var startIndex = fileLines.FindIndex(x => x.StartsWith(FutoshikiFileLables.Start));
@@ -39,7 +39,8 @@ namespace CSP
                 var line = fileLines[i].Split(';');
                 for (int j = 0; j < board.GetLength(1); j++)
                 {
-                    board[boardIndex, j] = int.Parse(line[j]);
+                    var value = int.Parse(line[j]);
+                    board[boardIndex, j] = new FutoshikiVariable(value == 0 ? (int?) null : value, Enumerable.Range(1, size).ToList());
                 }
                 boardIndex++;
             }
@@ -49,15 +50,7 @@ namespace CSP
                 var constraint = fileLines[i].Split(';');
                 futoshikiConstraints.Add(new FutoshikiConstraint(constraint[0], constraint[1]));
             }
-            Dictionary<(int, int), List<int>> domains = new Dictionary<(int, int), List<int>>();
-            for (int i = 0; i < size; i++)
-            {
-                for (int j = 0; j < size; j++)
-                {
-                    domains[(i, j)] = Enumerable.Range(1, size).ToList();
-                }
-            }
-            return new FutoshikiData(size,board, domains, futoshikiConstraints);
+            return new FutoshikiData(size,board, futoshikiConstraints);
         }
     }
 }

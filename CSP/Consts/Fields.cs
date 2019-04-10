@@ -6,12 +6,12 @@ namespace CSP.Consts
     {
         public static Dictionary<char, int> Rows = new Dictionary<char, int>
         {
-            {'A',1},
-            {'B', 2},
-            {'C', 3},
-            {'D', 4},
-            {'E', 5},
-            {'F', 6}
+            {'A',0},
+            {'B', 1},
+            {'C', 2},
+            {'D', 3},
+            {'E', 4},
+            {'F', 5}
         };
     }
 }
