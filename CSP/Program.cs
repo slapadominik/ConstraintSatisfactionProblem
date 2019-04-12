@@ -18,7 +18,6 @@ namespace CSP
                 @"C:\Users\domin\Desktop\Studia\Semestr VI\Sztuczna Inteligencja\Lab2\CSP\data_training\futoshiki_4_0.txt");
 
             IFutoshiki futoshiki = new FutoshikiCSP();
-
             var result = futoshiki.SolveGame(data);
 
             Console.WriteLine(result);

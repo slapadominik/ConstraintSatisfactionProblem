@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace CSP.Entities.Futoshiki
 {
@@ -6,7 +7,8 @@ namespace CSP.Entities.Futoshiki
     {
         public int Id { get; }
         public int? Value { get; set; }
-        public IList<int> Domain { get; }
+        public IList<int> Domain { get; private set; }
+        private readonly IList<int> _domainCopy;
         private static int _instancesCount;
 
         public FutoshikiVariable(int? value, IList<int> domain)
@@ -14,6 +16,12 @@ namespace CSP.Entities.Futoshiki
             Id = _instancesCount++;
             Value = value;
             Domain = domain;
+            _domainCopy = new List<int>(domain);
+        }
+
+        public void ResetDomain()
+        {
+            Domain = _domainCopy.Union(Domain).ToList();
         }
 
         protected bool Equals(FutoshikiVariable other)

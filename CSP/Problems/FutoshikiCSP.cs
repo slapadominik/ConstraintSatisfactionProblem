@@ -15,14 +15,41 @@ namespace CSP.Problems
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            var hasFoundSolution = Backtracking(data);
+            var hasFoundSolution = ForwardChecking(data);
             stopwatch.Stop();
             return new FutoshikiResult(hasFoundSolution ? data.Board : null, _nodesVisitedCount,stopwatch.Elapsed);
         }
 
-        private FutoshikiVariable[,] ForwardChecking(FutoshikiData data)
+        private bool ForwardChecking(FutoshikiData data)
         {
-            throw new NotImplementedException();
+            _nodesVisitedCount++;
+            if (!data.IsBoardValid())
+            {
+                return false;
+            }
+            if (data.IsBoardComplete())
+            {
+                return true;
+            }
+            var variable = data.PickUnassignedVariable();
+            foreach (var value in variable.Domain)
+            {
+                variable.Value = value;
+                if (data.CheckRowColumnConstraints(variable) && data.TryRemoveFromDomainsOnCross(variable))
+                {
+                    if (ForwardChecking(data))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    data.RestoreDomainsOnCross(variable);
+                }
+            }
+            variable.Value = null;
+            variable.ResetDomain();
+            return false;
         }
 
         private bool Backtracking(FutoshikiData data)

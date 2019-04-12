@@ -32,6 +32,43 @@ namespace CSP.Entities.Futoshiki
             return true;
         }
 
+        public void RestoreDomainsOnCross(FutoshikiVariable variable)
+        {
+            if (!variable.Value.HasValue)
+            {
+                throw new ArgumentNullException();
+            }
+            var (row, column) = GetVariablePosition(variable);
+            for (int k = row + 1; k < Board.GetLength(0); k++)
+            {
+                if (!Board[k, column].Value.HasValue)
+                {
+                    Board[k, column].ResetDomain();
+                }
+            }
+            for (int k = row - 1; k >= 0; k--)
+            {
+                if (!Board[k, column].Value.HasValue)
+                {
+                    Board[k, column].ResetDomain();
+                }
+            }
+            for (int k = column + 1; k < Board.GetLength(1); k++)
+            {
+                if (!Board[row, k].Value.HasValue)
+                {
+                    Board[row, k].ResetDomain();
+                }
+            }
+            for (int k = column - 1; k >= 0; k--)
+            {
+                if (!Board[row, k].Value.HasValue)
+                {
+                    Board[row, k].ResetDomain();
+                }
+            }
+        }
+
         public bool IsBoardValid()
         {
             for (int i = 0; i < Board.GetLength(0); i++)
@@ -72,20 +109,47 @@ namespace CSP.Entities.Futoshiki
             return null;
         }
 
-        private bool CheckRowColumnConstraints(FutoshikiVariable variable)
+        public bool TryRemoveFromDomainsOnCross(FutoshikiVariable variable)
         {
-            int row = 0;
-            int column = 0;
-            while (!Board[row,column].Equals(variable))
+            if (!variable.Value.HasValue)
             {
-                column++;
-                if (column == Board.GetLength(1))
+                throw new ArgumentNullException();
+            }
+            var (row, column) = GetVariablePosition(variable);
+            for (int k = row + 1; k < Board.GetLength(0); k++)
+            {
+                if (!Board[k,column].Value.HasValue && !Board[k, column].Domain.Remove(variable.Value.Value))
                 {
-                    row++;
-                    column = 0;
+                    return false;
                 }
             }
+            for (int k = row - 1; k >= 0; k--)
+            {
+                if (!Board[k, column].Value.HasValue && !Board[k, column].Domain.Remove(variable.Value.Value))
+                {
+                    return false;
+                }
+            }
+            for (int k = column + 1; k < Board.GetLength(1); k++)
+            {
+                if (!Board[row, k].Value.HasValue && !Board[row, k].Domain.Remove(variable.Value.Value))
+                {
+                    return false;
+                }
+            }
+            for (int k = column - 1; k >= 0; k--)
+            {
+                if (!Board[row, k].Value.HasValue && !Board[row, k].Domain.Remove(variable.Value.Value))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
+        public bool CheckRowColumnConstraints(FutoshikiVariable variable)
+        {
+            var (row, column) = GetVariablePosition(variable);
             for (int k=row+1; k < Board.GetLength(0); k++)
             {
                 if (variable.Value == Board[k, column].Value)
@@ -115,6 +179,23 @@ namespace CSP.Entities.Futoshiki
                 }
             }
             return true;
+        }
+
+        private (int row, int column) GetVariablePosition(FutoshikiVariable variable)
+        {
+            int row = 0;
+            int column = 0;
+            while (!Board[row, column].Equals(variable))
+            {
+                column++;
+                if (column == Board.GetLength(1))
+                {
+                    row++;
+                    column = 0;
+                }
+            }
+
+            return (row, column);
         }
 
         public override string ToString()
