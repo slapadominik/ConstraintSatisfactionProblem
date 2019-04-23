@@ -6,12 +6,14 @@ namespace CSP.Entities.Futoshiki
 {
     public class FutoshikiData
     {
+        public string Title { get; set; }
         public int Size { get; set; }
         public FutoshikiVariable[,] Board { get; set; }
         public IEnumerable<FutoshikiConstraint> Constraints { get; set; }
 
-        public FutoshikiData(int size, FutoshikiVariable[,] board, IEnumerable<FutoshikiConstraint> constraints)
+        public FutoshikiData(string title, int size, FutoshikiVariable[,] board, IEnumerable<FutoshikiConstraint> constraints)
         {
+            Title = title;
             Size = size;
             Board = board;
             Constraints = constraints;

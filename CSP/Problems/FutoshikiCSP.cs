@@ -17,7 +17,7 @@ namespace CSP.Problems
             stopwatch.Start();
             var hasFoundSolution = ForwardChecking(data);
             stopwatch.Stop();
-            return new FutoshikiResult(hasFoundSolution ? data.Board : null, _nodesVisitedCount,stopwatch.Elapsed);
+            return new FutoshikiResult(data.Title, hasFoundSolution ? data.Board : null, _nodesVisitedCount,stopwatch.Elapsed);
         }
 
         private bool ForwardChecking(FutoshikiData data)

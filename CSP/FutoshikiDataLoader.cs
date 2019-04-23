@@ -20,12 +20,12 @@ namespace CSP
 
         public FutoshikiData LoadFromFile(string path)
         {
-            var fileLines = _fileHelper.ReadFile(path);            
-            return ParseFileData(fileLines);
+            var fileLines = _fileHelper.ReadFile(path);           
+            return ParseFileData(path.Split(@"\").Last(), fileLines);
         }
 
 
-        private FutoshikiData ParseFileData(List<string> fileLines)
+        private FutoshikiData ParseFileData(string title, List<string> fileLines)
         {
             int size = int.Parse(fileLines[0]);
             FutoshikiVariable[,] board = new FutoshikiVariable[size,size];
@@ -50,7 +50,7 @@ namespace CSP
                 var constraint = fileLines[i].Split(';');
                 futoshikiConstraints.Add(new FutoshikiConstraint(constraint[0], constraint[1]));
             }
-            return new FutoshikiData(size,board, futoshikiConstraints);
+            return new FutoshikiData(title, size,board, futoshikiConstraints);
         }
     }
 }
