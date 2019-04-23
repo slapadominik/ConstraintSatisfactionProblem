@@ -15,7 +15,7 @@ namespace CSP.Problems
             stopwatch.Start();
             var solutionExists = Backtracking(data);
             stopwatch.Stop();
-            return new SkyscrapperResult(data.Title, solutionExists ? data.Board : null, _nodesVisitedCount, stopwatch.Elapsed);
+            return new SkyscrapperResult(data.Title, solutionExists ? data.Board : null, _nodesVisitedCount, stopwatch.Elapsed, data.Constraints);
         }
 
         private bool ForwardChecking(SkyscrapperData data)

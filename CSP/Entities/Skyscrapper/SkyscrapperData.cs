@@ -88,7 +88,7 @@ namespace CSP.Entities.Skyscrapper
 
             for (int i = 0; i < Constraints.TopEdge.Count; i++)
             {
-                if (!CheckTopEdgeConstraints(i))
+                if (Constraints.TopEdge[i].HasValue && !CheckTopEdgeConstraints(i))
                 {
                     return false;
                 }
@@ -96,7 +96,7 @@ namespace CSP.Entities.Skyscrapper
 
             for (int i = 0; i < Constraints.BottomEdge.Count; i++)
             {
-                if (!CheckBottomEdgeConstraints(i))
+                if (Constraints.BottomEdge[i].HasValue && !CheckBottomEdgeConstraints(i))
                 {
                     return false;
                 }
@@ -104,7 +104,7 @@ namespace CSP.Entities.Skyscrapper
 
             for (int i = 0; i < Constraints.LeftEdge.Count; i++)
             {
-                if (!CheckLeftEdgeConstraints(i))
+                if (Constraints.LeftEdge[i].HasValue && !CheckLeftEdgeConstraints(i))
                 {
                     return false;
                 }
@@ -112,7 +112,7 @@ namespace CSP.Entities.Skyscrapper
 
             for (int i = 0; i < Constraints.RightEdge.Count; i++)
             {
-                if (!CheckRightEdgeConstraints(i))
+                if (Constraints.RightEdge[i].HasValue && !CheckRightEdgeConstraints(i))
                 {
                     return false;
                 }
@@ -146,7 +146,7 @@ namespace CSP.Entities.Skyscrapper
         private bool CheckLeftEdgeConstraints(int row)
         {
             if (CountAssignedVariableForRow(row) == Board.GetLength(1)
-                && CountVisibleBuildingsForLeft(row) != Constraints.BottomEdge[row])
+                && CountVisibleBuildingsForLeft(row) != Constraints.LeftEdge[row])
             {
                 return false;
             }
@@ -157,7 +157,7 @@ namespace CSP.Entities.Skyscrapper
         private bool CheckRightEdgeConstraints(int row)
         {
             if (CountAssignedVariableForRow(row) == Board.GetLength(1)
-                && CountVisibleBuildingsForRight(row) != Constraints.BottomEdge[row])
+                && CountVisibleBuildingsForRight(row) != Constraints.RightEdge[row])
             {
                 return false;
             }

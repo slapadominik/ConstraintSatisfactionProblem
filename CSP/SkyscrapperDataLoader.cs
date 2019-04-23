@@ -39,32 +39,36 @@ namespace CSP
             var leftIndex = fileLines.FindIndex(x => x.StartsWith(SkyscrapperEdges.Left));
             var rightIndex = fileLines.FindIndex(x => x.StartsWith(SkyscrapperEdges.Right));
 
-            List<int> topEdgeConstraints = new List<int>();
+            List<int?> topEdgeConstraints = new List<int?>();
             var topVisibleBuildings = fileLines[topIndex].Split(';');
             for (int i = 1; i < topVisibleBuildings.Length; i++)
             {
-                topEdgeConstraints.Add(int.Parse(topVisibleBuildings[i]));
+                int value = int.Parse(topVisibleBuildings[i]);
+                topEdgeConstraints.Add(value == 0 ? (int?) null : value);
             }
 
-            List<int> bottomEdgeConstraints = new List<int>();
+            List<int?> bottomEdgeConstraints = new List<int?>();
             var bottomVisibleBuildings = fileLines[bottomIndex].Split(';');
             for (int i = 1; i < bottomVisibleBuildings.Length; i++)
             {
-                bottomEdgeConstraints.Add(int.Parse(bottomVisibleBuildings[i]));
+                int value = int.Parse(bottomVisibleBuildings[i]);
+                bottomEdgeConstraints.Add(value == 0 ? (int?)null : value);
             }
 
-            List<int> leftEdgeConstraints = new List<int>();
+            List<int?> leftEdgeConstraints = new List<int?>();
             var leftVisibleBuildings = fileLines[leftIndex].Split(';');
             for (int i = 1; i < leftVisibleBuildings.Length; i++)
             {
-                leftEdgeConstraints.Add(int.Parse(leftVisibleBuildings[i]));
+                int value = int.Parse(leftVisibleBuildings[i]);
+                leftEdgeConstraints.Add(value == 0 ? (int?)null : value);
             }
 
-            List<int> rightEdgeConstraints = new List<int>();
+            List<int?> rightEdgeConstraints = new List<int?>();
             var rightVisibleBuildings = fileLines[rightIndex].Split(';');
             for (int i = 1; i < rightVisibleBuildings.Length; i++)
             {
-                rightEdgeConstraints.Add(int.Parse(rightVisibleBuildings[i]));
+                int value = int.Parse(rightVisibleBuildings[i]);
+                rightEdgeConstraints.Add(value == 0 ? (int?)null : value);
             }
 
 
