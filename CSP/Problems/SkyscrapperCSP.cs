@@ -40,8 +40,7 @@ namespace CSP.Problems
                 return true;
             }
 
-            var variable = data.PickMostRestrictiveVariable();
-            data.SortDomainValues(variable);
+            var variable = data.PickUnassignedVariable();
             foreach (var value in variable.Domain)
             {
                 variable.Value = value;
