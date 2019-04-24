@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Microsoft.Win32.SafeHandles;
 
 namespace CSP.Entities.Futoshiki
 {
@@ -130,6 +132,103 @@ namespace CSP.Entities.Futoshiki
             }
 
             return true;
+        }
+
+        public void RemoveRepeatingDomainValuesFromBoard()
+        {
+            for (int i = 0; i < Board.GetLength(0); i++)
+            {
+                for (int j = 0; j < Board.GetLength(1); j++)
+                {
+                    if (Board[i, j].Value.HasValue)
+                    {
+                        RemoveFromDomainsOnCross(Board[i,j]);
+                    }
+                }
+            }
+        }
+
+        public FutoshikiVariable PickMostRestrictiveVariableFw()
+        {
+            int minDomainLength = Size;
+            int row = 0;
+            int column = 0;
+            for (int i = 0; i < Board.GetLength(0); i++)
+            {
+                for (int j = 0; j < Board.GetLength(1); j++)
+                {
+                    if (!Board[i, j].Value.HasValue)
+                    {
+                        if (Board[i, j].Domain.Count < minDomainLength && Board[i, j].Domain.Any())
+                        {
+                            minDomainLength = Board[i, j].Domain.Count;
+                            row = i;
+                            column = j;
+                        }
+                    }
+                }
+            }
+            return Board[row, column];
+        }
+
+        public FutoshikiVariable PickMostRestrictiveVariableBt()
+        {
+            foreach (var constraint in Constraints)
+            {
+                if (!Board[constraint.LowerIndex.row, constraint.LowerIndex.column].Value.HasValue)
+                {
+                    return Board[constraint.LowerIndex.row, constraint.LowerIndex.column];
+                }
+            }
+            int maxVariablesAssignedOnCross = 0;
+            int variablesAssigned = 0;
+            int row = 0;
+            int column = 0;
+            for (int i = 0; i < Board.GetLength(0); i++)
+            {
+                for (int j = 0; j < Board.GetLength(1); j++)
+                {
+                    if (!Board[i, j].Value.HasValue)
+                    {
+                        variablesAssigned = CountAssignedVariablesInColumn(j) + CountAssignedVariablesInRow(i);
+                        if (variablesAssigned > maxVariablesAssignedOnCross)
+                        {
+                            maxVariablesAssignedOnCross = variablesAssigned;
+                            row = i;
+                            column = j;
+                        }
+                    }
+                }
+            }
+            return Board[row, column];
+        }
+
+        private int CountAssignedVariablesInColumn(int column)
+        {
+            int count = 0;
+            for (int i = 0; i < Board.GetLength(0); i++)
+            {
+                if (Board[i, column].Value.HasValue)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        private int CountAssignedVariablesInRow(int row)
+        {
+            int count = 0;
+            for (int j = 0; j < Board.GetLength(0); j++)
+            {
+                if (Board[row, j].Value.HasValue)
+                {
+                    count++;
+                }
+            }
+
+            return count;
         }
 
         public FutoshikiVariable PickUnassignedVariable()

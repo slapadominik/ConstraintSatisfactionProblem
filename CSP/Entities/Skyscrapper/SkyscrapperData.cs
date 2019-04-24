@@ -323,6 +323,90 @@ namespace CSP.Entities.Skyscrapper
             return null;
         }
 
+        public SkyscrapperVariable PickMostRestrictiveVariable()
+        {
+            for (int i = 0; i < Constraints.TopEdge.Count; i++)
+            {
+                if (Constraints.TopEdge[i] == 1 && !Board[0, i].Value.HasValue)
+                {
+                    return Board[0, i];
+                }
+            }
+
+            for (int i = 0; i < Constraints.LeftEdge.Count; i++)
+            {
+                if (Constraints.LeftEdge[i] == 1 && !Board[i, 0].Value.HasValue)
+                {
+                    return Board[i, 0];
+                }
+            }
+
+            for (int i = 0; i < Constraints.RightEdge.Count; i++)
+            {
+                if (Constraints.RightEdge[i] == 1 && !Board[i, Size-1].Value.HasValue)
+                {
+                    return Board[i, Size - 1];
+                }
+            }
+
+            for (int i = 0; i < Constraints.BottomEdge.Count; i++)
+            {
+                if (Constraints.BottomEdge[i] == 1 && !Board[Size-1, i].Value.HasValue)
+                {
+                    return Board[Size - 1, i];
+                }
+            }
+            int maxVariablesAssignedOnCross = 0;
+            int variablesAssigned = 0;
+            int row = 0;
+            int column = 0;
+            for (int i = 0; i < Board.GetLength(0); i++)
+            {
+                for (int j = 0; j < Board.GetLength(1); j++)
+                {
+                    if (!Board[i, j].Value.HasValue)
+                    {
+                        variablesAssigned = CountAssignedVariablesInColumn(j) + CountAssignedVariablesInRow(i);
+                        if (variablesAssigned > maxVariablesAssignedOnCross)
+                        {
+                            maxVariablesAssignedOnCross = variablesAssigned;
+                            row = i;
+                            column = j;
+                        }
+                    }
+                }
+            }
+            return Board[row, column];
+        }
+
+        private int CountAssignedVariablesInColumn(int column)
+        {
+            int count = 0;
+            for (int i = 0; i < Board.GetLength(0); i++)
+            {
+                if (Board[i, column].Value.HasValue)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        private int CountAssignedVariablesInRow(int row)
+        {
+            int count = 0;
+            for (int j = 0; j < Board.GetLength(0); j++)
+            {
+                if (Board[row, j].Value.HasValue)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
         public void RemoveFromDomainsOnCross(SkyscrapperVariable variable)
         {
             if (!variable.Value.HasValue)
@@ -392,6 +476,34 @@ namespace CSP.Entities.Skyscrapper
                 }
             }
             return true;
+        }
+
+        public void SortDomainValues(SkyscrapperVariable variable)
+        {
+            var position = GetVariablePosition(variable);
+            if (position.row == 0 && Constraints.TopEdge[position.column] == 1)
+            {
+                variable.Domain.Clear();
+                variable.Domain.Add(Size);
+            }
+
+            if (position.row == Size-1 && Constraints.BottomEdge[position.column] == 1)
+            {
+                variable.Domain.Clear();
+                variable.Domain.Add(Size);
+            }
+
+            if (position.column == 0 && Constraints.LeftEdge[position.row] == 1)
+            {
+                variable.Domain.Clear();
+                variable.Domain.Add(Size);
+            }
+
+            if (position.column == Size-1 && Constraints.RightEdge[position.row] == 1)
+            {
+                variable.Domain.Clear();
+                variable.Domain.Add(Size);
+            }
         }
 
         private (int row, int column) GetVariablePosition(SkyscrapperVariable variable)

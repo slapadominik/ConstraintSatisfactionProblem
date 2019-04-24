@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using CSP.Consts;
 using CSP.Entities.Futoshiki;
 using CSP.Entities.Skyscrapper;
 using CSP.Problems.Interfaces;
@@ -9,13 +10,21 @@ namespace CSP.Problems
     {
         private int _nodesVisitedCount = 0;
 
-        public SkyscrapperResult SolveGame(SkyscrapperData data)
+        public SkyscrapperResult SolveGame(SkyscrapperData data, Algorithm algorithm)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            var solutionExists = ForwardChecking(data);
+            bool foundSolution;
+            if (algorithm == Algorithm.Backtracking)
+            {
+                foundSolution = Backtracking(data);
+            }
+            else
+            {
+                foundSolution = ForwardChecking(data);
+            }
             stopwatch.Stop();
-            return new SkyscrapperResult(data.Title, solutionExists ? data.Board : null, _nodesVisitedCount, stopwatch.Elapsed, data.Constraints);
+            return new SkyscrapperResult(data.Title, foundSolution ? data.Board : null, _nodesVisitedCount, stopwatch.Elapsed, data.Constraints);
         }
 
         private bool ForwardChecking(SkyscrapperData data)
@@ -31,7 +40,8 @@ namespace CSP.Problems
                 return true;
             }
 
-            var variable = data.PickUnassignedVariable();
+            var variable = data.PickMostRestrictiveVariable();
+            data.SortDomainValues(variable);
             foreach (var value in variable.Domain)
             {
                 variable.Value = value;
@@ -61,7 +71,9 @@ namespace CSP.Problems
             {
                 return true;
             }
-            var variable = data.PickUnassignedVariable();
+
+            var variable = data.PickMostRestrictiveVariable();
+            data.SortDomainValues(variable);
             foreach (var value in variable.Domain)
             {
                 variable.Value = value;

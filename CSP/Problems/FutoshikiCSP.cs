@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using CSP.Consts;
 using CSP.Entities;
 using CSP.Entities.Futoshiki;
 using CSP.Exceptions;
@@ -11,13 +12,24 @@ namespace CSP.Problems
     {
         private int _nodesVisitedCount = 0;
 
-        public FutoshikiResult SolveGame(FutoshikiData data)
+        public FutoshikiResult SolveGame(FutoshikiData data, Algorithm algorithm)
         {
             Stopwatch stopwatch = new Stopwatch();
+            bool foundSolution;
             stopwatch.Start();
-            var hasFoundSolution = ForwardChecking(data);
+            if (algorithm == Algorithm.Backtracking)
+            {
+                data.RemoveRepeatingDomainValuesFromBoard();
+                foundSolution = Backtracking(data);
+            }
+            else
+            {
+                data.RemoveRepeatingDomainValuesFromBoard();
+                foundSolution = ForwardChecking(data);
+            }
             stopwatch.Stop();
-            return new FutoshikiResult(data.Title, hasFoundSolution ? data.Board : null, _nodesVisitedCount,stopwatch.Elapsed);
+
+            return new FutoshikiResult(data.Title, foundSolution ? data.Board : null, _nodesVisitedCount,stopwatch.Elapsed);
         }
 
         private bool ForwardChecking(FutoshikiData data)
@@ -31,7 +43,8 @@ namespace CSP.Problems
             {
                 return true;
             }
-            var variable = data.PickUnassignedVariable();
+
+            var variable = data.PickMostRestrictiveVariableBt();
             foreach (var value in variable.Domain)
             {
                 variable.Value = value;
@@ -61,7 +74,7 @@ namespace CSP.Problems
             {
                 return true;
             }
-            var variable = data.PickUnassignedVariable();
+            var variable = data.PickMostRestrictiveVariableBt();
             foreach (var value in variable.Domain)
             {
                 variable.Value = value;
