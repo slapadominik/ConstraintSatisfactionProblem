@@ -15,18 +15,18 @@ namespace CSP
         static void Main(string[] args)
         {
             FileHelper fileHelper = new FileHelper();
-            IDataLoader<SkyscrapperData> futoshikiLoader = new SkyscrapperDataLoader(fileHelper);
+            IDataLoader<FutoshikiData> futoshikiLoader = new FutoshikiDataLoader(fileHelper);
             var data = futoshikiLoader.LoadFromFile(
-                @"C:\Users\domin\Desktop\Studia\Semestr VI\Sztuczna Inteligencja\Lab2\CSP\data_training\skyscrapper_4_0.txt");
+                @"C:\Users\domin\Desktop\Studia\Semestr VI\Sztuczna Inteligencja\Lab2\DaneBadawcze\test_futo_9_0.txt");
 
             Console.WriteLine("Starting solving puzzle.");
-            ISkyscrapper futoshiki = new SkyscrapperCSP();
+            IFutoshiki futoshiki = new FutoshikiCSP();
             var result = futoshiki.SolveGame(data);
             Console.WriteLine("Successfuly solved puzzle.");
 
             try
             {
-               fileHelper.WriteToFile(result.ToHtml(), "skyscrapper_4_0.html", @"C:\Users\domin\Desktop\Studia\Semestr VI\Sztuczna Inteligencja\Lab2\Wyniki\");
+               fileHelper.WriteToFile(result.ToHtml(), "test_futo_9_0_fw.html", @"C:\Users\domin\Desktop\Studia\Semestr VI\Sztuczna Inteligencja\Lab2\Wyniki\");
             }
             catch (FileAlreadyExistsException ex)
             {

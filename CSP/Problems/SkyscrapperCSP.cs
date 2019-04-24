@@ -13,7 +13,7 @@ namespace CSP.Problems
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            var solutionExists = Backtracking(data);
+            var solutionExists = ForwardChecking(data);
             stopwatch.Stop();
             return new SkyscrapperResult(data.Title, solutionExists ? data.Board : null, _nodesVisitedCount, stopwatch.Elapsed, data.Constraints);
         }
@@ -25,24 +25,24 @@ namespace CSP.Problems
             {
                 return false;
             }
+
             if (data.IsBoardComplete())
             {
                 return true;
             }
+
             var variable = data.PickUnassignedVariable();
             foreach (var value in variable.Domain)
             {
                 variable.Value = value;
-                if (data.CheckRowColumnConstraints(variable) && data.TryRemoveFromDomainsOnCross(variable))
+                if (data.CheckRowColumnConstraints(variable) && data.CheckBuildingsConstraints())
                 {
+                    data.RemoveFromDomainsOnCross(variable);
                     if (ForwardChecking(data))
                     {
                         return true;
                     }
-                }
-                else
-                {
-                    data.RestoreDomainsOnCross(variable);
+                    data.RestoreValueFromDomainOnCross(variable, value);
                 }
             }
             variable.Value = null;

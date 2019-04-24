@@ -35,17 +35,15 @@ namespace CSP.Problems
             foreach (var value in variable.Domain)
             {
                 variable.Value = value;
-                if (data.CheckRowColumnConstraints(variable) && data.TryRemoveFromDomainsOnCross(variable))
+                if (data.CheckRowColumnConstraints(variable))
                 {
+                    data.RemoveFromDomainsOnCross(variable);
                     if (ForwardChecking(data))
                     {
                         return true;
                     }
-                }
-                else
-                {
-                    data.RestoreDomainsOnCross(variable);
-                }
+                    data.RestoreValueFromDomainOnCross(variable, value);
+                }             
             }
             variable.Value = null;
             variable.ResetDomain();

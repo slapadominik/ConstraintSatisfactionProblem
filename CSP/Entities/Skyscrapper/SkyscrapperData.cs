@@ -36,6 +36,43 @@ namespace CSP.Entities.Skyscrapper
             return true;
         }
 
+        public void RestoreValueFromDomainOnCross(SkyscrapperVariable variable, int value)
+        {
+            if (!variable.Value.HasValue)
+            {
+                throw new ArgumentNullException();
+            }
+            var (row, column) = GetVariablePosition(variable);
+            for (int k = row + 1; k < Board.GetLength(0); k++)
+            {
+                if (!Board[k, column].Value.HasValue)
+                {
+                    Board[k, column].Domain.Add(value);
+                }
+            }
+            for (int k = row - 1; k >= 0; k--)
+            {
+                if (!Board[k, column].Value.HasValue)
+                {
+                    Board[k, column].Domain.Add(value);
+                }
+            }
+            for (int k = column + 1; k < Board.GetLength(1); k++)
+            {
+                if (!Board[row, k].Value.HasValue)
+                {
+                    Board[row, k].Domain.Add(value);
+                }
+            }
+            for (int k = column - 1; k >= 0; k--)
+            {
+                if (!Board[row, k].Value.HasValue)
+                {
+                    Board[row, k].Domain.Add(value);
+                }
+            }
+        }
+
         public void RestoreDomainsOnCross(SkyscrapperVariable variable)
         {
             if (!variable.Value.HasValue)
@@ -86,6 +123,11 @@ namespace CSP.Entities.Skyscrapper
                 }
             }
 
+            return CheckBuildingsConstraints();
+        }
+
+        public bool CheckBuildingsConstraints()
+        {
             for (int i = 0; i < Constraints.TopEdge.Count; i++)
             {
                 if (Constraints.TopEdge[i].HasValue && !CheckTopEdgeConstraints(i))
@@ -281,7 +323,7 @@ namespace CSP.Entities.Skyscrapper
             return null;
         }
 
-        public bool TryRemoveFromDomainsOnCross(SkyscrapperVariable variable)
+        public void RemoveFromDomainsOnCross(SkyscrapperVariable variable)
         {
             if (!variable.Value.HasValue)
             {
@@ -290,33 +332,32 @@ namespace CSP.Entities.Skyscrapper
             var (row, column) = GetVariablePosition(variable);
             for (int k = row + 1; k < Board.GetLength(0); k++)
             {
-                if (!Board[k, column].Value.HasValue && !Board[k, column].Domain.Remove(variable.Value.Value))
+                if (!Board[k, column].Value.HasValue)
                 {
-                    return false;
+                    Board[k, column].Domain.Remove(variable.Value.Value);
                 }
             }
             for (int k = row - 1; k >= 0; k--)
             {
-                if (!Board[k, column].Value.HasValue && !Board[k, column].Domain.Remove(variable.Value.Value))
+                if (!Board[k, column].Value.HasValue)
                 {
-                    return false;
+                    Board[k, column].Domain.Remove(variable.Value.Value);
                 }
             }
             for (int k = column + 1; k < Board.GetLength(1); k++)
             {
-                if (!Board[row, k].Value.HasValue && !Board[row, k].Domain.Remove(variable.Value.Value))
+                if (!Board[row, k].Value.HasValue)
                 {
-                    return false;
+                    Board[row, k].Domain.Remove(variable.Value.Value);
                 }
             }
             for (int k = column - 1; k >= 0; k--)
             {
-                if (!Board[row, k].Value.HasValue && !Board[row, k].Domain.Remove(variable.Value.Value))
+                if (!Board[row, k].Value.HasValue)
                 {
-                    return false;
+                    Board[row, k].Domain.Remove(variable.Value.Value);
                 }
             }
-            return true;
         }
 
         public bool CheckRowColumnConstraints(SkyscrapperVariable variable)
